@@ -1,0 +1,18 @@
+include MANIFEST.in
+include requirements.txt
+include *.json
+include *.md
+include *.py
+include *.txt
+recursive-include deltapumps *.css
+recursive-include deltapumps *.csv
+recursive-include deltapumps *.html
+recursive-include deltapumps *.ico
+recursive-include deltapumps *.js
+recursive-include deltapumps *.json
+recursive-include deltapumps *.md
+recursive-include deltapumps *.png
+recursive-include deltapumps *.py
+recursive-include deltapumps *.svg
+recursive-include deltapumps *.txt
+recursive-exclude deltapumps *.pyc
