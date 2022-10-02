@@ -5,7 +5,7 @@ import frappe
 @frappe.whitelist()
 def make_history_card(name):
 	salesorder=frappe.get_doc("Sales Order",name)
-	new_hiscard=frappe.new_doc("History Card")
+	new_hiscard = frappe._dict({})
 	new_hiscard.transaction_date=salesorder.transaction_date
 	for i in salesorder.items:
 		new_hiscard.append("items",
@@ -20,6 +20,7 @@ def make_history_card(name):
 			"description":i.description,
 			"technical_parameter_entry":i.technical_parameter_entry
 		})
+	new_hiscard=frappe.get_doc("History Card", new_hiscard)
 	return new_hiscard
 
 @frappe.whitelist()
