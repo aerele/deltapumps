@@ -61,7 +61,7 @@ def make_ingreds(self,materials):
 					"parent_item":materials.item
 				})
 				bom_doc=frappe.get_doc("BOM",has_bom)
-				make_ingreds(bom_doc)
+				make_ingreds(self, bom_doc)
 			else:
 				self.append("exploded_items",
 				{
