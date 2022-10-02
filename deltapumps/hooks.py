@@ -179,5 +179,7 @@ user_data_fields = [
 # ]
 
 jenv = {
-	"get_attrib: deltapumps.custompy.history_card.get_selected_attribs"
+	"methods":[
+		"get_attrib:deltapumps.custompy.history_card.get_selected_attribs"
+	]
 }
