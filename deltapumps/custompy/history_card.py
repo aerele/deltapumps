@@ -36,7 +36,7 @@ def get_atribute(name):
 	return atrib
 
 def get_selected_attribs(attributes):
-	return [i for i in attributes.split(',')]
+	return [i for i in attributes.split('\n')]
 
 def before_save(self, method):
 	for j in self.items:
