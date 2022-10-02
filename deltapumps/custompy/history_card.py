@@ -47,8 +47,8 @@ def before_save(self, method):
 def make_ingreds(self,materials):
 	for i in materials.items:
 		if i.item_code:
-			bom1 = frappe.db.get_value("BOM",{"item":i.item_code},"name")
-			if bom1:
+			has_bom = frappe.db.get_value("BOM",{"item":i.item_code},"name")
+			if has_bom:
 				self.append("exploded_items",
 				{
 					"item_code":i.item_code,
@@ -58,10 +58,10 @@ def make_ingreds(self,materials):
 					"rate":i.rate,
 					"amount":i.amount,
 					"uom":i.uom,
-					"parent_item":materials.item_code
+					"parent_item":materials.item
 				})
-				bomdoc=frappe.get_doc("BOM",bom1)
-				self.make_ingreds(bomdoc)
+				bom_doc=frappe.get_doc("BOM",has_bom)
+				make_ingreds(bom_doc)
 			else:
 				self.append("exploded_items",
 				{
@@ -72,6 +72,6 @@ def make_ingreds(self,materials):
 					"rate":i.rate,
 					"amount":i.amount,
 					"uom":i.uom,
-					"parent_item":materials.item_code
+					"parent_item":materials.item
 				}
 		)
