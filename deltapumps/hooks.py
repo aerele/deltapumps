@@ -92,7 +92,7 @@ app_license = "MIT"
 doc_events = {
 	"History Card":{
 		"before_save":[
-			"deltapumps.custompy.before_save"
+			"deltapumps.custompy.history_card.before_save"
 		]
 	}
 # 	"*": {
