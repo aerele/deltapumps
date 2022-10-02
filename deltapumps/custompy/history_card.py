@@ -35,8 +35,8 @@ def get_atribute(name):
 		atrib.append(i.attribute)
 	return atrib
 
-def get_selected_attribs(attributes):
-	return [i for i in attributes.split('\n')]
+def get_selected_attribs(attributes, seperator):
+	return [i for i in attributes.split(seperator)]
 
 def before_save(self, method):
 	for j in self.items:
