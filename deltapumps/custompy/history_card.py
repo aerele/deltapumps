@@ -5,8 +5,12 @@ import frappe
 @frappe.whitelist()
 def make_history_card(name):
 	salesorder=frappe.get_doc("Sales Order",name)
+	new_hiscard = frappe.db.get_value("History Card", {"sales_order": name}) or None
+	if not new_hiscard:
+		return frappe.get_doc("History Card", new_hiscard)
 	new_hiscard = frappe._dict({})
 	new_hiscard.transaction_date=salesorder.transaction_date
+	new_hiscard.sales_order=salesorder.name
 	for i in salesorder.items:
 		new_hiscard.append("items",
 		{
