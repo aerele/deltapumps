@@ -178,3 +178,6 @@ user_data_fields = [
 # 	"deltapumps.auth.validate"
 # ]
 
+jenv = {
+	"get_attrib: deltapumps.custompy.history_card.get_selected_attribs"
+}
