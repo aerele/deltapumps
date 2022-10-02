@@ -35,6 +35,13 @@ def get_atribute(name):
 		atrib.append(i.attribute)
 	return atrib
 
+@frappe.whitelist()
+def get_parameter(parameter):
+	if not frappe.db.get_value("Technical Parameter Entry", parameter):
+		return []
+	parameter_entry = frappe.get_doc("Technical Parameter Entry", parameter)
+	return [i.technical_parameter_name in parameter_entry.technical_parameter_table]
+
 def get_selected_attribs(attributes, seperator):
 	return [i for i in attributes.split(seperator)]
 
