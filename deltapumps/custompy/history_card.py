@@ -36,14 +36,14 @@ def get_atribute(name):
 	return atrib
 
 
-def before_save(self):
+def before_save(self, method):
 	for j in self.items:
 		if j.item_code:
 			bom = frappe.db.get_value("BOM",{"item":j.item_code},"name")
 			if bom:
 				ingred=frappe.get_doc("BOM",bom)
 				self.pname=ingred.item_name
-				self.make_ingreds(ingred)
+				self.make_ingreds(self, ingred)
 
 def make_ingreds(self,ingred):
 	for i in ingred.items:
