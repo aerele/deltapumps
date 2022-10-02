@@ -43,7 +43,7 @@ def before_save(self, method):
 			if bom:
 				ingred=frappe.get_doc("BOM",bom)
 				self.pname=ingred.item_name
-				self.make_ingreds(self, ingred)
+				make_ingreds(self, ingred)
 
 def make_ingreds(self,ingred):
 	for i in ingred.items:
