@@ -24,7 +24,7 @@ def make_history_card(name):
 			"description":i.description,
 			"technical_parameter_entry":i.technical_parameter_entry
 		})
-	new_hiscard=frappe.get_doc("History Card", new_hiscard)
+	new_hiscard=frappe.get_doc("History Card", new_hiscard).save()
 	return new_hiscard
 
 @frappe.whitelist()
