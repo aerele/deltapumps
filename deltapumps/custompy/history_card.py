@@ -8,7 +8,7 @@ def make_history_card(name):
 	new_hiscard = frappe.db.get_value("History Card", {"sales_order": name}) or None
 	if new_hiscard:
 		return frappe.get_doc("History Card", new_hiscard)
-	new_hiscard = frappe._dict({})
+	new_hiscard = frappe.new_doc("History Card")
 	new_hiscard.transaction_date=salesorder.transaction_date
 	new_hiscard.sales_order=salesorder.name
 	for i in salesorder.items:
@@ -24,7 +24,7 @@ def make_history_card(name):
 			"description":i.description,
 			"technical_parameter_entry":i.technical_parameter_entry
 		})
-	new_hiscard=frappe.get_doc("History Card", new_hiscard).save()
+	new_hiscard.save()
 	return new_hiscard
 
 @frappe.whitelist()
