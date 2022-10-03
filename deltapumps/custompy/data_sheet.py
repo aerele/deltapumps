@@ -6,8 +6,8 @@ def make_data_sheet(name):
 	quotation = frappe.get_doc("Quotation", name)
 	new_datasheet = frappe.db.get_value("Data Sheet", {"quotation": name}) or None
 	if new_datasheet:
-		return frappe.get_doc("History Card", new_datasheet)
-	new_datasheet = frappe.new_doc("History Card")
+		return frappe.get_doc("Data Sheet", new_datasheet)
+	new_datasheet = frappe.new_doc("Data Sheet")
 	new_datasheet.transaction_date=quotation.transaction_date
 	new_datasheet.sales_order=quotation.name
 	for i in quotation.items:
