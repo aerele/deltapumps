@@ -9,7 +9,7 @@ def make_data_sheet(name):
 		return frappe.get_doc("Data Sheet", new_datasheet)
 	new_datasheet = frappe.new_doc("Data Sheet")
 	new_datasheet.transaction_date=quotation.transaction_date
-	new_datasheet.sales_order=quotation.name
+	new_datasheet.quotation=quotation.name
 	for i in quotation.items:
 		new_datasheet.append("data_sheet_item",
 		{
@@ -48,7 +48,7 @@ def make_data_sheet(name):
 
 def get_templates(doc):
 	data = frappe._dict({})
-	for i in doc.items:
+	for i in doc.data_sheet_item:
 		data[i.item_code] = {}
 		for j in doc.item_details:
 			if i.item_code == j.item:
