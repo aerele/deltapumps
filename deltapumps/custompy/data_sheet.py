@@ -37,7 +37,7 @@ def make_data_sheet(name):
 			new_datasheet.append("item_details", {
 				"item": item.name,
 				"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
-				"doc_type": "Item Attribute",
+				"doc_type": "Technical Parameters",
 				"parameter": j.technical_parameter_name,
 				"parameter_value": j.parameter_value_as_per_uom or j.parameter_value
 			})
