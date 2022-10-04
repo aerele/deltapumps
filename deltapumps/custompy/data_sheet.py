@@ -33,13 +33,27 @@ def make_data_sheet(name):
 				"parameter_value": j.attribute_value
 			})
 		parameter_entry =frappe.get_doc("Technical Parameter Entry", i.technical_parameter_entry)
-		for j in parameter_entry.technical_parameter_table:
+		template = frappe.get_doc("Technical Parameters Template", parameter_entry.technical_parameters_template)
+		for j in template.technical_parameters_template:
 			new_datasheet.append("item_details", {
 				"item": item.name,
 				"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
 				"doc_type": "Technical Parameters",
 				"parameter": j.technical_parameter_name,
-				"parameter_value": j.parameter_value_as_per_uom or j.parameter_value
+				"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "j.parameter_value")
 			})
 	new_datasheet.save()
 	return new_datasheet
+
+
+def get_templates(doc):
+	data = frappe._dict({})
+	for i in doc.items:
+		data[i.item_code] = {}
+		for j in doc.item_details:
+			if i.item_code == j.item:
+				if j.attribute_category in data[i.item_code]:
+					data[i.item_code][j.attribute_category].append([j.parameter, j.parameter_value])
+				else:
+					data[i.item_code][j.attribute_category] = [[j.parameter, j.parameter_value]]
+	return data

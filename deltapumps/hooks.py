@@ -180,6 +180,7 @@ user_data_fields = [
 
 jenv = {
 	"methods":[
-		"get_attrib:deltapumps.custompy.history_card.get_selected_attribs"
+		"get_attrib:deltapumps.custompy.history_card.get_selected_attribs",
+		"get_print_data:deltapumps.custompy.data_sheet.get_templates",
 	]
 }
