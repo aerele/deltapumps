@@ -49,11 +49,11 @@ def make_data_sheet(name):
 def get_templates(doc):
 	data = frappe._dict({})
 	for i in doc.data_sheet_item:
-		data[i.item_code] = {}
+		data[i.item] = {}
 		for j in doc.item_details:
-			if i.item_code == j.item:
-				if j.attribute_category in data[i.item_code]:
-					data[i.item_code][j.attribute_category].append([j.parameter, j.parameter_value])
+			if i.item == j.item:
+				if j.attribute_category in data[i.item]:
+					data[i.item][j.attribute_category].append([j.parameter, j.parameter_value])
 				else:
-					data[i.item_code][j.attribute_category] = [[j.parameter, j.parameter_value]]
+					data[i.item][j.attribute_category] = [[j.parameter, j.parameter_value]]
 	return data
