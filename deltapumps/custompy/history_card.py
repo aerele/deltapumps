@@ -61,14 +61,19 @@ def add_exploded_pb_item(self, pb):
 	for i in pb.items:
 		if i.item_code:
 			has_pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
+			rate = frappe.db.get_value("Item Price", {'item_code': i.item_code, "uom":i.uom, "selling":1, "valid_from":["<=", frappe.utils.today()]}, 'rate')
+			if not rate:
+				rate = frappe.db.get_value("Item Price", {'item_code': i.item_code, "selling":1, "valid_from":["<=", frappe.utils.today()]}, 'rate')
+			if not rate:
+				rate = 0
 			self.append("exploded_items",
 				{
 					"item_code":i.item_code,
 					"item_name":frappe.db.get_value("Item", i.item_name, 'item_name'),
 					"description":i.description,
 					"qty":i.qty,
-					"rate":i.rate,
-					"amount":i.amount,
+					"rate":rate,
+					"amount":rate * i.qty,
 					"uom":i.uom,
 					"parent_item":pb.new_item_code
 				}
