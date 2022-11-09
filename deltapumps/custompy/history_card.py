@@ -49,30 +49,39 @@ def before_save(self, method):
 	for j in self.items:
 		if j.item_code:
 			bom = frappe.db.get_value("BOM",{"item":j.item_code},"name")
+			pb = frappe.db.get_value("Product Bundle", {"new_item_code":j.item_code})
 			if bom:
 				materials=frappe.get_doc("BOM",bom)
-				make_ingreds(self, materials)
+				add_exploded_bom_item(self, materials)
+			elif pb:
+				pb = frappe.get_doc("Product Bundle", pb)
+				add_exploded_pb_item(self, pb)
 
-def make_ingreds(self,materials):
-	for i in materials.items:
+def add_exploded_pb_item(self, pb):
+	for i in pb.items:
 		if i.item_code:
-			has_bom = frappe.db.get_value("BOM",{"item":i.item_code},"name")
-			if has_bom:
-				self.append("exploded_items",
+			has_pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
+			self.append("exploded_items",
 				{
 					"item_code":i.item_code,
-					"item_name":i.item_name,
+					"item_name":frappe.db.get_value("Item", i.item_name, 'item_name'),
 					"description":i.description,
 					"qty":i.qty,
 					"rate":i.rate,
 					"amount":i.amount,
 					"uom":i.uom,
-					"parent_item":materials.item
-				})
-				bom_doc=frappe.get_doc("BOM",has_bom)
-				make_ingreds(self, bom_doc)
-			else:
-				self.append("exploded_items",
+					"parent_item":pb.new_item_code
+				}
+			)
+			if has_pb:
+				pb_doc = frappe.get_doc("Product Bundle", has_pb)
+				add_exploded_pb_item(self, pb_doc)
+
+def add_exploded_bom_item(self,materials):
+	for i in materials.items:
+		if i.item_code:
+			has_bom = frappe.db.get_value("BOM",{"item":i.item_code},"name")
+			self.append("exploded_items",
 				{
 					"item_code":i.item_code,
 					"item_name":i.item_name,
@@ -83,4 +92,7 @@ def make_ingreds(self,materials):
 					"uom":i.uom,
 					"parent_item":materials.item
 				}
-		)
+			)
+			if has_bom:
+				bom_doc=frappe.get_doc("BOM",has_bom)
+				add_exploded_bom_item(self, bom_doc)
