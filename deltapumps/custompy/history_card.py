@@ -69,7 +69,7 @@ def add_exploded_pb_item(self, pb):
 			self.append("exploded_items",
 				{
 					"item_code":i.item_code,
-					"item_name":frappe.db.get_value("Item", i.item_name, 'item_name'),
+					"item_name":frappe.db.get_value("Item", i.item_code, 'item_name'),
 					"description":i.description,
 					"qty":i.qty,
 					"rate":rate,
