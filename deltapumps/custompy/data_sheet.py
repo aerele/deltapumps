@@ -13,7 +13,7 @@ def make_data_sheet(name):
 	for i in quotation.items:
 		new_datasheet.append("data_sheet_item",
 		{
-			"item_code":i.item_code,
+			"item":i.item_code,
 			"item_name":i.item_name,
 			"qty":i.qty,
 			"rate":i.rate,
@@ -27,7 +27,7 @@ def make_data_sheet(name):
 			for j in pbi.items:
 				new_datasheet.append("data_sheet_item",
 						{
-							"item_code":j.item_code,
+							"item":j.item_code,
 							"item_name":j.item_name,
 							"qty":j.qty,
 							"rate":j.rate,
