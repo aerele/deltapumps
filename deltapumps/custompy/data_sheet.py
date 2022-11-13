@@ -38,7 +38,7 @@ def make_data_sheet(name):
 							"parent_item":i.item_code
 						})
 	for i in new_datasheet.data_sheet_item:
-		item = frappe.get_doc("Item", i.item_code)
+		item = frappe.get_doc("Item", i.item)
 		for j in item.attributes:
 			new_datasheet.append("item_details", {
 				"item": item.name,
