@@ -25,16 +25,21 @@ def make_data_sheet(name):
 		if frappe.db.get_value("Product Bundle",i.item_code,"name"):
 			pbi = frappe.get_doc("Product Bundle",i.item_code)
 			for j in pbi.items:
+				rate = frappe.db.get_value("Item Price", {'item_code': i.item_code, "uom":i.uom, "selling":1, "valid_from":["<=", frappe.utils.today()]}, 'price_list_rate')
+				if not rate:
+					rate = frappe.db.get_value("Item Price", {'item_code': i.item_code, "selling":1, "valid_from":["<=", frappe.utils.today()]}, 'price_list_rate')
+				if not rate:
+					rate = 0
 				new_datasheet.append("data_sheet_item",
 						{
 							"item":j.item_code,
-							"item_name":j.item_name,
+							"item_name":frappe.db.get_value("Item", i.item_code, 'item_name'),
 							"qty":j.qty,
-							"rate":j.rate,
-							"amount":j.amount,
+							"rate":rate,
+							"amount":rate * j.qty,
 							"uom":j.uom,
 							"description":j.description,
-							"technical_parameter_entry":j.technical_parameter_entry,
+							"technical_parameter_entry":'', #j.technical_parameter_entry,
 							"parent_item":i.item_code
 						})
 	for i in new_datasheet.data_sheet_item:
