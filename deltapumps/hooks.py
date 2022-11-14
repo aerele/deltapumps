@@ -94,6 +94,11 @@ doc_events = {
 		"before_save":[
 			"deltapumps.custompy.history_card.before_save"
 		]
+	},
+	"Data Sheet":{
+		"before_save":[
+			"deltapumps.custompy.data_sheet.before_save"
+		]
 	}
 # 	"*": {
 # 		"on_update": "method",
