@@ -22,7 +22,7 @@ def before_save(self, method):
 				if i.name == j.parent_detail_docname:
 					self.append("data_sheet_item",
 						{
-							"item_code":j.item_code,
+							"item":j.item_code,
 							"item_name":j.item_name,
 							"description":j.description,
 							"qty":j.qty ,
