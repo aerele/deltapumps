@@ -20,7 +20,7 @@ def before_save(self, method):
 		if pb:
 			for j in quotation.packed_items:
 				if i.name == j.parent_detail_docname:
-					self.append("items",
+					self.append("data_sheet_item",
 						{
 							"item_code":j.item_code,
 							"item_name":j.item_name,
