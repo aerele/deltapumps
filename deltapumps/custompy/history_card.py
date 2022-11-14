@@ -11,19 +11,6 @@ def make_history_card(name):
 	new_hiscard = frappe.new_doc("History Card")
 	new_hiscard.transaction_date=salesorder.transaction_date
 	new_hiscard.sales_order=salesorder.name
-	for i in salesorder.items:
-		new_hiscard.append("items",
-		{
-			"item_code":i.item_code,
-			"delivery_date":i.delivery_date,
-			"item_name":i.item_name,
-			"qty":i.qty,
-			"rate":i.rate,
-			"amount":i.amount,
-			"uom":i.uom,
-			"description":i.description,
-			"technical_parameter_entry":i.technical_parameter_entry
-		})
 	new_hiscard.save()
 	return new_hiscard
 
@@ -46,41 +33,45 @@ def get_selected_attribs(attributes, seperator):
 	return [i for i in attributes.split(seperator)]
 
 def before_save(self, method):
+	salesorder=frappe.get_doc("Sales Order",self.sales_order)
+	for i in salesorder.items:
+		pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
+		if pb:
+			for j in salesorder.packed_items:
+				if i.name == j.parent_detail_docname:
+					self.append("items",
+						{
+							"item_code":j.item_code,
+							"item_name":j.item_name,
+							"description":j.description,
+							"qty":j.qty,
+							"rate":j.rate,
+							"amount":j.rate * j.qty,
+							"uom":j.uom,
+							"technical_parameter_entry":j.technical_parameter_entry,
+							"product_bundle":pb,
+							"parent_item":i.item_code
+						}
+					)
+			continue
+		self.append("items",
+		{
+			"item_code":i.item_code,
+			"delivery_date":i.delivery_date,
+			"item_name":i.item_name,
+			"qty":i.qty,
+			"rate":i.rate,
+			"amount":i.amount,
+			"uom":i.uom,
+			"description":i.description,
+			"technical_parameter_entry":i.technical_parameter_entry
+		})
 	for j in self.items:
 		if j.item_code:
 			bom = frappe.db.get_value("BOM",{"item":j.item_code},"name")
-			pb = frappe.db.get_value("Product Bundle", {"new_item_code":j.item_code})
 			if bom:
 				materials=frappe.get_doc("BOM",bom)
 				add_exploded_bom_item(self, materials)
-			elif pb:
-				pb = frappe.get_doc("Product Bundle", pb)
-				add_exploded_pb_item(self, pb)
-
-def add_exploded_pb_item(self, pb):
-	for i in pb.items:
-		if i.item_code:
-			has_pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
-			rate = frappe.db.get_value("Item Price", {'item_code': i.item_code, "uom":i.uom, "selling":1, "valid_from":["<=", frappe.utils.today()]}, 'price_list_rate')
-			if not rate:
-				rate = frappe.db.get_value("Item Price", {'item_code': i.item_code, "selling":1, "valid_from":["<=", frappe.utils.today()]}, 'price_list_rate')
-			if not rate:
-				rate = 0
-			self.append("exploded_items",
-				{
-					"item_code":i.item_code,
-					"item_name":frappe.db.get_value("Item", i.item_code, 'item_name'),
-					"description":i.description,
-					"qty":i.qty,
-					"rate":rate,
-					"amount":rate * i.qty,
-					"uom":i.uom,
-					"parent_item":pb.new_item_code
-				}
-			)
-			if has_pb:
-				pb_doc = frappe.get_doc("Product Bundle", has_pb)
-				add_exploded_pb_item(self, pb_doc)
 
 def add_exploded_bom_item(self,materials):
 	for i in materials.items:
