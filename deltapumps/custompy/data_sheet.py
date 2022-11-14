@@ -14,61 +14,63 @@ def make_data_sheet(name):
 	return new_datasheet
 
 def before_save(self, method):
-	quotation = frappe.get_doc("Quotation", self.quotation)
-	for i in quotation.items:
-		pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
-		if pb:
-			for j in quotation.packed_items:
-				if i.name == j.parent_detail_docname:
-					self.append("data_sheet_item",
-						{
-							"item":j.item_code,
-							"item_name":j.item_name,
-							"description":j.description,
-							"qty":j.qty ,
-							"rate":j.rate,
-							"amount":j.rate * j.qty ,
-							"uom":j.uom,
-							"technical_parameter_entry":j.technical_parameter_entry,
-							"product_bundle":pb,
-							"parent_item":i.item_code
-						}
-					)
-			continue
-		self.append("data_sheet_item",
-		{
-			"item":i.item_code,
-			"item_name":i.item_name,
-			"qty":i.qty,
-			"rate":i.rate,
-			"amount":i.amount,
-			"uom":i.uom,
-			"description":i.description,
-			"technical_parameter_entry":i.technical_parameter_entry
-		})
-	for i in self.data_sheet_item:
-		item = frappe.get_doc("Item", i.item)
-		for j in item.attributes:
-			self.append("item_details", {
-				"item": item.name,
-				"attribute_category": frappe.db.get_value("Item Attribute", j.attribute, 'attribute_category'),
-				"doc_type": "Item Attribute",
-				"parameter": j.attribute,
-				"parameter_value": j.attribute_value
+	if len(self.data_sheet_item) == 0:
+		quotation = frappe.get_doc("Quotation", self.quotation)
+		for i in quotation.items:
+			pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
+			if pb:
+				for j in quotation.packed_items:
+					if i.name == j.parent_detail_docname:
+						self.append("data_sheet_item",
+							{
+								"item":j.item_code,
+								"item_name":j.item_name,
+								"description":j.description,
+								"qty":j.qty ,
+								"rate":j.rate,
+								"amount":j.rate * j.qty ,
+								"uom":j.uom,
+								"technical_parameter_entry":j.technical_parameter_entry,
+								"product_bundle":pb,
+								"parent_item":i.item_code
+							}
+						)
+				continue
+			self.append("data_sheet_item",
+			{
+				"item":i.item_code,
+				"item_name":i.item_name,
+				"qty":i.qty,
+				"rate":i.rate,
+				"amount":i.amount,
+				"uom":i.uom,
+				"description":i.description,
+				"technical_parameter_entry":i.technical_parameter_entry
 			})
+	if len(self.item_details) == 0:
+		for i in self.data_sheet_item:
+			item = frappe.get_doc("Item", i.item)
+			for j in item.attributes:
+				self.append("item_details", {
+					"item": item.name,
+					"attribute_category": frappe.db.get_value("Item Attribute", j.attribute, 'attribute_category'),
+					"doc_type": "Item Attribute",
+					"parameter": j.attribute,
+					"parameter_value": j.attribute_value
+				})
 
-		if not i.technical_parameter_entry:
-			continue
-		parameter_entry =frappe.get_doc("Technical Parameter Entry", i.technical_parameter_entry)
-		template = frappe.get_doc("Technical Parameters Template", parameter_entry.technical_parameters_template)
-		for j in template.technical_parameters_template:
-			self.append("item_details", {
-				"item": item.name,
-				"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
-				"doc_type": "Technical Parameters",
-				"parameter": j.technical_parameter_name,
-				"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value")
-			})
+			if not i.technical_parameter_entry:
+				continue
+			parameter_entry =frappe.get_doc("Technical Parameter Entry", i.technical_parameter_entry)
+			template = frappe.get_doc("Technical Parameters Template", parameter_entry.technical_parameters_template)
+			for j in template.technical_parameters_template:
+				self.append("item_details", {
+					"item": item.name,
+					"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
+					"doc_type": "Technical Parameters",
+					"parameter": j.technical_parameter_name,
+					"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value")
+				})
 
 
 def get_templates(doc):
