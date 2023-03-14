@@ -183,9 +183,9 @@ user_data_fields = [
 # 	"deltapumps.auth.validate"
 # ]
 
-jinja = {
-	"methods":[
-		"get_attrib:deltapumps.custompy.history_card.get_selected_attribs",
-		"get_print_data:deltapumps.custompy.data_sheet.get_templates",
-	]
-}
+# jinja = {
+# 	"methods":[
+# 		"get_attrib:deltapumps.custompy.history_card.get_selected_attribs",
+# 		"get_print_data:deltapumps.custompy.data_sheet.get_templates",
+# 	]
+# }
