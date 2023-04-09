@@ -81,7 +81,7 @@ def get_templates(doc):
 		for j in doc.item_details:
 			if i.item == j.item:
 				if j.attribute_category in data[i.item]:
-					data[i.item][j.attribute_category].append([j.parameter, j.parameter_value])
+					data[i.item][j.attribute_category].append([j.parameter, j.parameter_value, j.remarks or ''])
 				else:
-					data[i.item][j.attribute_category] = [[j.parameter, j.parameter_value]]
+					data[i.item][j.attribute_category] = [[j.parameter, j.parameter_value, j.remarks or '']]
 	return data
