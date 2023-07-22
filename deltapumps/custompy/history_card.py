@@ -70,7 +70,7 @@ def before_save(self, method):
 	if len(self.exploded_items) == 0:
 		for j in self.items:
 			if j.item_code:
-				bom = frappe.db.get_value("BOM",{"item":j.item_code},"name")
+				bom = frappe.db.get_value("BOM",{"item":j.item_code, "docstatus":1, "is_default":1},"name")
 				if bom:
 					materials=frappe.get_doc("BOM",bom)
 					add_exploded_bom_item(self, materials)
@@ -78,7 +78,7 @@ def before_save(self, method):
 def add_exploded_bom_item(self,materials):
 	for i in materials.items:
 		if i.item_code:
-			has_bom = frappe.db.get_value("BOM",{"item":i.item_code},"name")
+			has_bom = frappe.db.get_value("BOM",{"item":i.item_code, "docstatus":1, "is_default":1},"name")
 			self.append("exploded_items",
 				{
 					"item_code":i.item_code,
