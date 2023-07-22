@@ -71,7 +71,7 @@ def before_save(self, method):
 		for j in self.items:
 			if j.item_code:
 				bom = frappe.db.get_value("BOM",{"item":j.item_code, "docstatus":1, "is_default":1},"name")
-				if bom:
+				if bom and not j.do_not_explode:
 					materials=frappe.get_doc("BOM",bom)
 					add_exploded_bom_item(self, materials)
 
@@ -91,6 +91,6 @@ def add_exploded_bom_item(self,materials):
 					"parent_item":materials.item
 				}
 			)
-			if has_bom:
+			if has_bom and not i.do_not_explode:
 				bom_doc=frappe.get_doc("BOM",has_bom)
 				add_exploded_bom_item(self, bom_doc)
