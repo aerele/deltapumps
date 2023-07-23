@@ -77,7 +77,6 @@ def before_save(self, method):
 						add_exploded_bom_item(self, materials)
 	except Exception as e:
 		frappe.log_error(e)
-		frappe.throw(e)
 
 def add_exploded_bom_item(self,materials):
 	for i in materials.items:
