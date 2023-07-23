@@ -33,47 +33,51 @@ def get_selected_attribs(attributes, seperator):
 	return [i for i in attributes.split(seperator)]
 
 def before_save(self, method):
-	if len(self.items) == 0:
-		salesorder=frappe.get_doc("Sales Order",self.sales_order)
-		for i in salesorder.items:
-			pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
-			if pb:
-				for j in salesorder.packed_items:
-					if i.name == j.parent_detail_docname:
-						self.append("items",
-							{
-								"item_code":j.item_code,
-								"item_name":j.item_name,
-								"description":j.description,
-								"qty":j.qty,
-								"rate":j.rate,
-								"amount":j.rate * j.qty,
-								"uom":j.uom,
-								"technical_parameter_entry":j.technical_parameter_entry,
-								"product_bundle":pb,
-								"parent_item":i.item_code
-							}
-						)
-				continue
-			self.append("items",
-			{
-				"item_code":i.item_code,
-				"delivery_date":i.delivery_date,
-				"item_name":i.item_name,
-				"qty":i.qty,
-				"rate":i.rate,
-				"amount":i.amount,
-				"uom":i.uom,
-				"description":i.description,
-				"technical_parameter_entry":i.technical_parameter_entry
-			})
-	if len(self.exploded_items) == 0:
-		for j in self.items:
-			if j.item_code:
-				bom = frappe.db.get_value("BOM",{"item":j.item_code, "docstatus":1, "is_default":1},"name")
-				if bom:
-					materials=frappe.get_doc("BOM",bom)
-					add_exploded_bom_item(self, materials)
+	try:
+		if len(self.items) == 0:
+			salesorder=frappe.get_doc("Sales Order",self.sales_order)
+			for i in salesorder.items:
+				pb = frappe.db.get_value("Product Bundle", {"new_item_code":i.item_code})
+				if pb:
+					for j in salesorder.packed_items:
+						if i.name == j.parent_detail_docname:
+							self.append("items",
+								{
+									"item_code":j.item_code,
+									"item_name":j.item_name,
+									"description":j.description,
+									"qty":j.qty,
+									"rate":j.rate,
+									"amount":j.rate * j.qty,
+									"uom":j.uom,
+									"technical_parameter_entry":j.technical_parameter_entry,
+									"product_bundle":pb,
+									"parent_item":i.item_code
+								}
+							)
+					continue
+				self.append("items",
+				{
+					"item_code":i.item_code,
+					"delivery_date":i.delivery_date,
+					"item_name":i.item_name,
+					"qty":i.qty,
+					"rate":i.rate,
+					"amount":i.amount,
+					"uom":i.uom,
+					"description":i.description,
+					"technical_parameter_entry":i.technical_parameter_entry
+				})
+		if len(self.exploded_items) == 0:
+			for j in self.items:
+				if j.item_code:
+					bom = frappe.db.get_value("BOM",{"item":j.item_code, "docstatus":1, "is_default":1},"name")
+					if bom:
+						materials=frappe.get_doc("BOM",bom)
+						add_exploded_bom_item(self, materials)
+	except Exception as e:
+		frappe.log_error(e)
+		frappe.throw(e)
 
 def add_exploded_bom_item(self,materials):
 	for i in materials.items:
