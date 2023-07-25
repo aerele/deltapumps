@@ -94,6 +94,6 @@ def add_exploded_bom_item(self,materials):
 					"parent_item":materials.item
 				}
 			)
-			if has_bom and not i.do_not_explode:
+			if has_bom and has_bom != materials.name and not i.do_not_explode:
 				bom_doc=frappe.get_doc("BOM",has_bom)
 				add_exploded_bom_item(self, bom_doc)
