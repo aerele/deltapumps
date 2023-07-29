@@ -11,7 +11,8 @@ def make_history_card(name):
 	new_hiscard = frappe.new_doc("History Card")
 	new_hiscard.transaction_date=salesorder.transaction_date
 	new_hiscard.sales_order=salesorder.name
-	new_hiscard.save()
+	new_hiscard = before_save(new_hiscard, "Creating History Card")
+	#new_hiscard.save()
 	return new_hiscard
 
 @frappe.whitelist()
@@ -75,6 +76,8 @@ def before_save(self, method):
 					if bom:
 						materials=frappe.get_doc("BOM",bom)
 						add_exploded_bom_item(self, materials)
+		if method == "Creating History Card":
+			return self
 	except Exception as e:
 		frappe.log_error(e)
 
