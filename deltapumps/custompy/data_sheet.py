@@ -70,6 +70,7 @@ def before_save(self, method):
 					"doc_type": "Technical Parameters",
 					"parameter": j.technical_parameter_name,
 					"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value"),
+					"parameter_uom": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom"),
 					"remarks": j.remark__notes
 				})
 
@@ -81,7 +82,7 @@ def get_templates(doc):
 		for j in doc.item_details:
 			if i.item == j.item:
 				if j.attribute_category in data[i.item]:
-					data[i.item][j.attribute_category].append([j.parameter, j.parameter_value, j.remarks or ''])
+					data[i.item][j.attribute_category].append([j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or ''])
 				else:
-					data[i.item][j.attribute_category] = [[j.parameter, j.parameter_value, j.remarks or '']]
+					data[i.item][j.attribute_category] = [[j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or '']]
 	return data
