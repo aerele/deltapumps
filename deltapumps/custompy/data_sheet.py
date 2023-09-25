@@ -50,7 +50,7 @@ def before_save(self, method):
 	if len(self.item_details) == 0:
 		for i in self.data_sheet_item:
 			item = frappe.get_doc("Item", i.item)
-			for j in item.attributes:
+			for j in frappe.db.get_all("Item Variant Attribute", {"parent": i.item}, "*", order_by="idx"): #item.attributes:
 				self.append("item_details", {
 					"item": item.name,
 					"attribute_category": frappe.db.get_value("Item Attribute", j.attribute, 'attribute_category'),
@@ -64,7 +64,7 @@ def before_save(self, method):
 				continue
 			parameter_entry =frappe.get_doc("Technical Parameter Entry", i.technical_parameter_entry)
 			template = frappe.get_doc("Technical Parameters Template", parameter_entry.technical_parameters_template)
-			for j in template.technical_parameters_template:
+			for j in frappe.db.get_all("Technical Parameters Table", {"parent":i.technical_parameter_entry}, "*", order_by="idx"): #template.technical_parameters_template:
 				self.append("item_details", {
 					"item": item.name,
 					"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
