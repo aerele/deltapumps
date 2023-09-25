@@ -88,7 +88,7 @@ def get_templates(doc):
 						continue
 				if j.attribute_category == "":
 					j.attribute_category = None
-				if j.attribute_category in data[i.item]:
+				if j.attribute_category in data[i.item+(i.technical_parameter_entry or '')]:
 					data[i.item+(i.technical_parameter_entry or '')][j.attribute_category].append([j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or ''])
 				else:
 					data[i.item+(i.technical_parameter_entry or '')][j.attribute_category] = [[j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or '']]
