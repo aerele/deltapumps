@@ -56,7 +56,8 @@ def before_save(self, method):
 					"attribute_category": frappe.db.get_value("Item Attribute", j.attribute, 'attribute_category'),
 					"doc_type": "Item Attribute",
 					"parameter": j.attribute,
-					"parameter_value": j.attribute_value
+					"parameter_value": j.attribute_value,
+					"technical_parameter_entry": i.technical_parameter_entry
 				})
 
 			if not i.technical_parameter_entry:
@@ -71,20 +72,21 @@ def before_save(self, method):
 					"parameter": j.technical_parameter_name,
 					"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value"),
 					"parameter_uom": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom"),
-					"remarks": j.remark__notes
+					"remarks": j.remark__notes,
+					"technical_parameter_entry": i.technical_parameter_entry
 				})
 
 
 def get_templates(doc):
 	data = frappe._dict({})
 	for i in doc.data_sheet_item:
-		data[i.item] = {}
+		data[i.item+i.technical_parameter_entry] = {}
 		for j in doc.item_details:
-			if i.item == j.item:
+			if i.item == j.item and i.technical_parameter_entry == j.technical_parameter_entry:
 				if j.attribute_category == "":
 					j.attribute_category = None
 				if j.attribute_category in data[i.item]:
-					data[i.item][j.attribute_category].append([j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or ''])
+					data[i.item+i.technical_parameter_entry][j.attribute_category].append([j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or ''])
 				else:
-					data[i.item][j.attribute_category] = [[j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or '']]
+					data[i.item+i.technical_parameter_entry][j.attribute_category] = [[j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or '']]
 	return data
