@@ -80,13 +80,16 @@ def before_save(self, method):
 def get_templates(doc):
 	data = frappe._dict({})
 	for i in doc.data_sheet_item:
-		data[i.item+i.technical_parameter_entry] = {}
+		data[i.item+(i.technical_parameter_entry or '')] = {}
 		for j in doc.item_details:
-			if i.item == j.item and i.technical_parameter_entry == j.technical_parameter_entry:
+			if i.item == j.item:
+				if j.technical_parameter_entry:
+					if i.technical_parameter_entry != j.technical_parameter_entry:
+						continue
 				if j.attribute_category == "":
 					j.attribute_category = None
 				if j.attribute_category in data[i.item]:
-					data[i.item+i.technical_parameter_entry][j.attribute_category].append([j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or ''])
+					data[i.item+(i.technical_parameter_entry or '')][j.attribute_category].append([j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or ''])
 				else:
-					data[i.item+i.technical_parameter_entry][j.attribute_category] = [[j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or '']]
+					data[i.item+(i.technical_parameter_entry or '')][j.attribute_category] = [[j.parameter, j.parameter_value, j.parameter_uom or '', j.remarks or '']]
 	return data
