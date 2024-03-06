@@ -25,7 +25,7 @@ def before_save(self, method):
 							{
 								"item":j.item_code,
 								"item_name":j.item_name,
-								"description":j.description,
+								"description":j.customer_description,
 								"qty":j.qty ,
 								"rate":j.rate,
 								"amount":j.rate * j.qty ,
