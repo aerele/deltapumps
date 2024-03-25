@@ -25,7 +25,7 @@ def before_save(self, method):
 							{
 								"item":j.item_code,
 								"item_name":j.item_name,
-								"description":j.customer_description,
+								"description":j.description,
 								"qty":j.qty ,
 								"rate":j.rate,
 								"amount":j.rate * j.qty ,
@@ -44,37 +44,37 @@ def before_save(self, method):
 				"rate":i.rate,
 				"amount":i.amount,
 				"uom":i.uom,
-				"description":i.description,
+				"description":i.customer_description,
 				"technical_parameter_entry":i.technical_parameter_entry
 			})
-	if len(self.item_details) == 0:
-		for i in self.data_sheet_item:
-			item = frappe.get_doc("Item", i.item)
-			for j in frappe.db.get_all("Item Variant Attribute", {"parent": i.item}, "*", order_by="idx"): #item.attributes:
-				self.append("item_details", {
-					"item": item.name,
-					"attribute_category": frappe.db.get_value("Item Attribute", j.attribute, 'attribute_category'),
-					"doc_type": "Item Attribute",
-					"parameter": j.attribute,
-					"parameter_value": j.attribute_value,
-					"technical_parameter_entry": i.technical_parameter_entry
-				})
+	self.item_details = []
+	for i in self.data_sheet_item:
+		item = frappe.get_doc("Item", i.item)
+		for j in frappe.db.get_all("Item Variant Attribute", {"parent": i.item}, "*", order_by="idx"): #item.attributes:
+			self.append("item_details", {
+				"item": item.name,
+				"attribute_category": frappe.db.get_value("Item Attribute", j.attribute, 'attribute_category'),
+				"doc_type": "Item Attribute",
+				"parameter": j.attribute,
+				"parameter_value": j.attribute_value,
+				"technical_parameter_entry": i.technical_parameter_entry
+			})
 
-			if not i.technical_parameter_entry:
-				continue
-			parameter_entry =frappe.get_doc("Technical Parameter Entry", i.technical_parameter_entry)
-			template = frappe.get_doc("Technical Parameters Template", parameter_entry.technical_parameters_template)
-			for j in frappe.db.get_all("Technical Parameters Table", {"parent":i.technical_parameter_entry}, "*", order_by="idx"): #template.technical_parameters_template:
-				self.append("item_details", {
-					"item": item.name,
-					"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
-					"doc_type": "Technical Parameters",
-					"parameter": j.technical_parameter_name,
-					"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value"),
-					"parameter_uom": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom"),
-					"remarks": j.remark__notes,
-					"technical_parameter_entry": i.technical_parameter_entry
-				})
+		if not i.technical_parameter_entry:
+			continue
+		parameter_entry =frappe.get_doc("Technical Parameter Entry", i.technical_parameter_entry)
+		template = frappe.get_doc("Technical Parameters Template", parameter_entry.technical_parameters_template)
+		for j in frappe.db.get_all("Technical Parameters Table", {"parent":i.technical_parameter_entry}, "*", order_by="idx"): #template.technical_parameters_template:
+			self.append("item_details", {
+				"item": item.name,
+				"attribute_category": frappe.db.get_value("Technical Parameters", j.technical_parameter_name, 'attribute_category'),
+				"doc_type": "Technical Parameters",
+				"parameter": j.technical_parameter_name,
+				"parameter_value": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value_as_per_uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "parameter_value"),
+				"parameter_uom": frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom") or frappe.db.get_value("Technical Parameters Table", {"parent":parameter_entry.name, "technical_parameter_name":j.technical_parameter_name}, "uom"),
+				"remarks": j.remark__notes,
+				"technical_parameter_entry": i.technical_parameter_entry
+			})
 
 
 def get_templates(doc):
