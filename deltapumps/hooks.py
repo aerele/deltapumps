@@ -1,5 +1,3 @@
-from . import __version__ as app_version
-
 app_name = "deltapumps"
 app_title = "Deltapumps"
 app_publisher = "Delta Pumps"
@@ -8,6 +6,9 @@ app_icon = "octicon octicon-file-directory"
 app_color = "grey"
 app_email = "hello@aerele.in"
 app_license = "MIT"
+
+# Apps that must be installed on the site before this one
+required_apps = ["erpnext"]
 
 # Includes in <head>
 # ------------------
@@ -155,26 +156,14 @@ doc_events = {
 # User Data Protection
 # --------------------
 
-user_data_fields = [
-	{
-		"doctype": "{doctype_1}",
-		"filter_by": "{filter_by}",
-		"redact_fields": ["{field_1}", "{field_2}"],
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_2}",
-		"filter_by": "{filter_by}",
-		"partial": 1,
-	},
-	{
-		"doctype": "{doctype_3}",
-		"strict": False,
-	},
-	{
-		"doctype": "{doctype_4}"
-	}
-]
+# user_data_fields = [
+# 	{
+# 		"doctype": "{doctype_1}",
+# 		"filter_by": "{filter_by}",
+# 		"redact_fields": ["{field_1}", "{field_2}"],
+# 		"partial": 1,
+# 	},
+# ]
 
 # Authentication and authorization
 # --------------------------------
